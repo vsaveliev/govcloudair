@@ -15,7 +15,7 @@ import (
 	"regexp"
 	"time"
 
-	types "github.com/ukcloud/govcloudair/types/v56"
+	types "github.com/vsaveliev/govcloudair/types/v56"
 )
 
 type EdgeGateway struct {

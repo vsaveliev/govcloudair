@@ -12,8 +12,9 @@ import (
 	"net/url"
 	"os"
 
-	types "github.com/ukcloud/govcloudair/types/v56"
 	"strconv"
+
+	types "github.com/vsaveliev/govcloudair/types/v56"
 )
 
 type VApp struct {
@@ -60,7 +61,7 @@ func (v *VApp) Refresh() error {
 	return nil
 }
 
-func (v *VApp) AddVM(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate VAppTemplate, name string) (Task, error) {
+func (v *VApp) AddVM(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate VAppTemplate, name string, computerName string) (Task, error) {
 
 	vcomp := &types.ReComposeVAppParams{
 		Ovf:         "http://schemas.dmtf.org/ovf/envelope/1",
@@ -81,6 +82,9 @@ func (v *VApp) AddVM(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate VAppTem
 					HREF: vapptemplate.VAppTemplate.Children.VM[0].NetworkConnectionSection.HREF,
 					Info: "Network config for sourced item",
 					PrimaryNetworkConnectionIndex: vapptemplate.VAppTemplate.Children.VM[0].NetworkConnectionSection.PrimaryNetworkConnectionIndex,
+				},
+				GuestCustomizationSection: &types.GuestCustomizationSection{
+					ComputerName: computerName,
 				},
 			},
 		},
@@ -184,7 +188,7 @@ func (v *VApp) RemoveVM(vm VM) error {
 	return nil
 }
 
-func (v *VApp) ComposeVApp(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate VAppTemplate, storageprofileref types.Reference, name string, description string) (Task, error) {
+func (v *VApp) ComposeVApp(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate VAppTemplate, storageprofileref types.Reference, name string, description string, computerName string) (Task, error) {
 
 	if vapptemplate.VAppTemplate.Children == nil || orgvdcnetworks == nil {
 		return Task{}, fmt.Errorf("can't compose a new vApp, objects passed are not valid")
@@ -215,6 +219,9 @@ func (v *VApp) ComposeVApp(orgvdcnetworks []*types.OrgVDCNetwork, vapptemplate V
 					HREF: vapptemplate.VAppTemplate.Children.VM[0].NetworkConnectionSection.HREF,
 					Info: "Network config for sourced item",
 					PrimaryNetworkConnectionIndex: vapptemplate.VAppTemplate.Children.VM[0].NetworkConnectionSection.PrimaryNetworkConnectionIndex,
+				},
+				GuestCustomizationSection: &types.GuestCustomizationSection{
+					ComputerName: computerName,
 				},
 			},
 		},
